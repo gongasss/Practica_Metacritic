@@ -160,7 +160,7 @@ public class Funciones {
             // se recogen todas las plataformas
             ArrayList<String> plataformas = new ArrayList<>();
             for (Game game : games) {
-                String sanitizedPlatformName = cleanString(game.getPlatform());
+                String sanitizedPlatformName = checkString(game.getPlatform());
                 if (!plataformas.contains(sanitizedPlatformName)) {
                     plataformas.add(sanitizedPlatformName);
                 }
@@ -267,7 +267,7 @@ public class Funciones {
         ArrayList<String> genres = new ArrayList<>();
 
         for (Game game : games) {
-            String sanitizedGenre = sanitizeGenreName(game.getGenre()); // Sanitiza el género
+            String sanitizedGenre = checkGenreGame(game.getGenre()); // Sanitiza el género
             if (!genres.contains(sanitizedGenre)) {
                 genres.add(sanitizedGenre);
             }
@@ -279,8 +279,8 @@ public class Funciones {
         }
 
         for (String genre : genres) {
-            // Sanitiza el nombre del género antes de usarlo en la ruta
-            String sanitizedGenre = sanitizeGenreName(genre);
+            // limpia el string del genero de caracteres especiales para utilizarlo en la ruta
+            String sanitizedGenre = checkGenreGame(genre);
             String path = "src/FicherosMetacritic/Files/Genres/" + sanitizedGenre;
 
             if(sanitizedGenre.isEmpty()){
@@ -289,10 +289,10 @@ public class Funciones {
                     unlistedGenreDir.mkdir();
                 }
 
-                // Crea el archivo txt con la información de los juegos del género
+                // crea el archivo txt con la información de los juegos del género
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(path + "/unlisted.txt"))) {
                     for (Game game : games) {
-                        if (sanitizeGenreName(game.getGenre()).equals(sanitizedGenre)) { // Compara los géneros sanitizados
+                        if (checkGenreGame(game.getGenre()).equals(sanitizedGenre)) { // compara los géneros sanitizados
                             if(game.getMetascore()>=80){
                                 bw.write(game.getGame() + " | " + game.getDeveloper());
                                 bw.newLine();
@@ -308,10 +308,10 @@ public class Funciones {
                     genreDir.mkdir();
                 }
 
-                // Crea el archivo txt con la información de los juegos del género
+                // crea el archivo txt con la información de los juegos del género
                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(path + "/" + sanitizedGenre + ".txt"))) {
                     for (Game game : games) {
-                        if (sanitizeGenreName(game.getGenre()).equals(sanitizedGenre)) { // Compara los géneros sanitizados
+                        if (checkGenreGame(game.getGenre()).equals(sanitizedGenre)) { // compara los géneros sanitizados
                             if(game.getMetascore()>=80){
                                 bw.write(game.getGame() + " | " + game.getDeveloper());
                                 bw.newLine();
@@ -371,19 +371,19 @@ public class Funciones {
             long currentPosition = 0;
 
             while (currentPosition < raf.length()) {
-                raf.seek(currentPosition); // Mover el puntero a la posición actual
+                raf.seek(currentPosition); // mueve el puntero a la posición actual
 
                 long ratingPosition = currentPosition+(Game.NAME_SIZE*2)+(Game.PLATFORM_SIZE*2)+(Game.DEVELOPER_SIZE*2)+(Game.GENRE_SIZE*2)+(Game.NUMBER_PLAYERS_SIZE*2); // Calcular la posición de la campo de rating
 
-                raf.seek(ratingPosition); // Mover el puntero a la posición de la campo de rating
+                raf.seek(ratingPosition); // mueve el puntero a la posición de la campo de rating
 
-                String rating = readChars(raf, Game.RATING_SIZE).trim(); // Leer el campo de rating
-                raf.seek(currentPosition); // Regresar a la posición actual para guardar
+                String rating = readChars(raf, Game.RATING_SIZE).trim(); // lee el campo de rating
+                raf.seek(currentPosition); // regresa a la posición actual para guardar
 
                 if (rating.equalsIgnoreCase("M")) {
-                    posiciones.add(currentPosition); // Guardar la posición del objeto Game
+                    posiciones.add(currentPosition); // guarda la posición del objeto Game
                 }
-                currentPosition += Game.TOTAL_SIZE; // Avanzar a la siguiente posición de objeto Game
+                currentPosition += Game.TOTAL_SIZE; // avanza a la siguiente posición de objeto Game
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -418,39 +418,37 @@ public class Funciones {
 
 
 
-    public static String cleanString(String platformName) {
-        // Reemplaza caracteres no válidos con un guion bajo
-        String sanitized = platformName.replaceAll("[^a-zA-Z0-9_]", "_");
+    private static String checkString(String platformName) {
 
-        // Si comienza con un dígito, prepend un guion bajo
-        if (Character.isDigit(sanitized.charAt(0))) {
+        String sanitized = platformName.replaceAll("[^a-zA-Z0-9_]", "_"); // Reemplaza caracteres no válidos con un guion bajo
+
+
+        if (Character.isDigit(sanitized.charAt(0))) { // Si comienza con un dígito, prepend un guion bajo
             sanitized = "_" + sanitized;
         }
 
         return sanitized;
     }
-    public static String sanitizeGenreName(String genreName) {
-        // Reemplaza caracteres no válidos (incluidos espacios) con un guion bajo
-        String sanitized = genreName.replaceAll("[/\\\\:*?\"<>| ]", "_");
+    private static String checkGenreGame(String genreName) {
 
-        // Verifica si la cadena está vacía antes de acceder a su primer carácter
-        if (!sanitized.isEmpty() && Character.isDigit(sanitized.charAt(0))) {
-            sanitized = "_" + sanitized;
+        String checked = genreName.replaceAll("[/\\\\:*?\"<>| ]", "_"); // Reemplaza caracteres no válidos (incluidos espacios) con un guion bajo
+
+
+        if (!checked.isEmpty() && Character.isDigit(checked.charAt(0))) { // Verifica si la cadena está vacía antes de acceder a su primer carácter
+            checked = "_" + checked;
         }
 
-        return sanitized;
+        return checked;
     }
     private static void writeAdjustedString(RandomAccessFile raf, String str, int length) throws IOException {
-        // Ajustar el string a la longitud especificada
-        String adjustedString = ajustarString(str, length);
-        raf.writeChars(adjustedString);
+        String adjustedString = ajustarString(str, length); // ajusta el string a la longitud especificada
+        raf.writeChars(adjustedString); // escribe el string
     }
-    // Método para ajustar un string a una longitud específica
     private static String ajustarString(String str, int length) {
         if (str.length() > length) {
-            return str.substring(0, length); // Cortar si es demasiado largo
+            return str.substring(0, length); // corta si es demasiado largo
         }
-        return String.format("%-" + length + "s", str); // Ajustar a la longitud deseada
+        return String.format("%-" + length + "s", str); // ajusta a la longitud deseada
     }
     private static String readChars(RandomAccessFile raf, int length) throws IOException {
         char[] chars = new char[length];
@@ -459,7 +457,7 @@ public class Funciones {
         }
         return new String(chars);
     }
-    public static Game stringToGame(String line){
+    private static Game stringToGame(String line){
         if(line!=null){
             String[] split = line.split(";");
             return new Game(split[0], split[1], split[2], split[3], split[4], split[5], Utils.formatDate(split[6]).getTime(), Integer.parseInt(split[7]), Integer.parseInt(split[8]), Integer.parseInt(split[9]), Integer.parseInt(split[10]), Integer.parseInt(split[11]), Integer.parseInt(split[12]), Double.parseDouble(split[13]), Double.parseDouble(split[14]));

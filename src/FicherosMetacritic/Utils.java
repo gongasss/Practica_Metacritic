@@ -7,6 +7,7 @@ import java.util.Locale;
 public class Utils {
 
     public static Date formatDate(String date) {
+        // intenta parsear una fecha con 2 formatos distintos (uno para leer del fichero original, otro para leer la fecha del fichero random)
         date = date.replaceAll("\\s{2,}", " ");
         if (date.compareTo("") != 0) {
             SimpleDateFormat sdf1 = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH); // Formato: Jan 03, 2024
@@ -26,16 +27,5 @@ public class Utils {
         }
         System.out.println("Fecha vacía");
         return null; // Retorna null si la fecha no es válida o está vacía
-    }
-    public static boolean esArmstrong(int num){
-        String numString = String.valueOf(num);
-        int resultadoCalculo = 0;
-        for (int i = 0; i < numString.length(); i++) { // ALGORITMO ARMSTRONG
-            resultadoCalculo += (int) Math.pow(Character.getNumericValue(numString.charAt(i)), numString.length());
-        }
-        return num == resultadoCalculo;
-    }
-    public static boolean esPar(int num){
-        return num%2==0;
     }
 }

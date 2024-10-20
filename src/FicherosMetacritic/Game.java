@@ -15,15 +15,6 @@ public class Game implements Comparable<Game>, Serializable {
     static final int GENRE_SIZE = 20;
     static final int NUMBER_PLAYERS_SIZE = 20;
     static final int RATING_SIZE = 20;
-    static final int RELEASE_DATE_SIZE = 8;
-    static final int POSITIVE_CRITICS_SIZE = 4;
-    static final int NEUTRAL_CRITICS_SIZE = 4;
-    static final int NEGATIVE_CRITICS_SIZE = 4;
-    static final int POSITIVE_USERS_SIZE = 4;
-    static final int NEUTRAL_USERS_SIZE = 4;
-    static final int NEGATIVE_USERS_SIZE = 4;
-    static final int METASCORE_SIZE = 8;
-    static final int USER_SCORE_SIZE = 8;
     static final int TOTAL_SIZE = 388;
     private String game;
     private String platform;
